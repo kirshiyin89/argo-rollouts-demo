@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate
+  namespace: demo
+spec:
+  args:
+  - name: service-name
+  metrics:
+  - name: success-rate
+    interval: 30s
+    count: 5
+    successCondition: result[0] >= 0.95
+    failureLimit: 2
+    provider:
+      prometheus:
+        address: http://prometheus-server.monitoring.svc.cluster.local
+        query: |
+          sum(irate(istio_requests_total{
+            reporter="source",
+            destination_service_name="{{args.service-name}}",
+            destination_service_namespace="demo",
+            response_code!~"5.*"
+          }[1m]))
+          /
+          sum(irate(istio_requests_total{
+            reporter="source",
+            destination_service_name="{{args.service-name}}",
+            destination_service_namespace="demo"
+          }[1m]))
