@@ -6,9 +6,11 @@ metadata:
 spec:
   replicas: 5
   revisionHistoryLimit: 3
+
   selector:
     matchLabels:
       app: rollouts-demo
+
   template:
     metadata:
       labels:
@@ -19,6 +21,7 @@ spec:
           image: argoproj/rollouts-demo:orange
           ports:
             - containerPort: 8080
+
   strategy:
     canary:
       trafficRouting:
@@ -31,15 +34,30 @@ spec:
             name: rollouts-demo-destrule
             canarySubsetName: canary
             stableSubsetName: stable
-      analysis:
-        templates:
-          - templateName: success-rate
-        args:
-          - name: service-name
-            value: rollouts-demo
+
       steps:
         - setWeight: 20
-        - pause: {duration: 10s}
+
+        - experiment:
+            duration: 2m
+
+            templates:
+              - name: baseline
+                specRef: stable
+
+              - name: canary
+                specRef: canary
+
+            analyses:
+              - name: success-rate
+                templateName: success-rate
+                args:
+                  - name: service-name
+                    value: rollouts-demo
+
         - setWeight: 50
-        - pause: {duration: 10s}
+
+        - pause:
+            duration: 10s
+
         - setWeight: 100
