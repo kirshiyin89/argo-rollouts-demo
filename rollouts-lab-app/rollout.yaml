@@ -33,10 +33,12 @@ spec:
             stableSubsetName: stable
       steps:
         - setWeight: 20
-        - pause: {duration: 30s}
-        - setWeight: 40
-        - pause: {duration: 30s}
-        - setWeight: 60
-        - pause: {duration: 30s}
-        - setWeight: 80
-        - pause: {duration: 30s}
+        - pause: {duration: 10s}
+        - analysis:
+            templateName: success-rate
+            args:
+            - name: service-name
+              value: rollouts-demo
+        - setWeight: 50
+        - pause: {duration: 10s}
+        - setWeight: 100
