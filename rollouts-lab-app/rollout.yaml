@@ -26,23 +26,19 @@ spec:
           virtualService:
             name: rollouts-demo-vsvc
             routes:
-            - primary
+              - primary
           destinationRule:
             name: rollouts-demo-destrule
             canarySubsetName: canary
             stableSubsetName: stable
       steps:
-      - setWeight: 20
-      - pause: {duration: 10s}
-      - analysis:
-          templateName: success-rate
-          args:
-          - name: service-name
-            value: rollouts-demo
-      - setWeight: 50
-      - pause: {duration: 10s}
-      - setWeight: 100
-              value: rollouts-demo
+        - setWeight: 20
+        - pause: {duration: 10s}
+        - analysis:
+            templateName: success-rate
+            args:
+              - name: service-name
+                value: rollouts-demo
         - setWeight: 50
         - pause: {duration: 10s}
         - setWeight: 100
