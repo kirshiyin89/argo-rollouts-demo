@@ -50,6 +50,7 @@ spec:
 
             analyses:
               - name: success-rate
+                requiredForCompletion: true
                 templateName: success-rate
                 args:
                   - name: service-name
