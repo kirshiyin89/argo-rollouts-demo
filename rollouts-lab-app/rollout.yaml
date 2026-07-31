@@ -23,15 +23,42 @@ spec:
             - containerPort: 8080
 
   strategy:
-    blueGreen:
-      activeService: rollouts-demo-active
-      previewService: rollouts-demo-preview
-      autoPromotionEnabled: false
-      scaleDownDelaySeconds: 30
-      prePromotionAnalysis:
-        templates:
-          - templateName: success-rate
-        args:
-          - name: service-name
-            value: rollouts-demo-preview
+    canary:
+      trafficRouting:
+        istio:
+          virtualService:
+            name: rollouts-demo-vsvc
+            routes:
+              - primary
+          destinationRule:
+            name: rollouts-demo-destrule
+            canarySubsetName: canary
+            stableSubsetName: stable
 
+      steps:
+        - setWeight: 20
+
+        - experiment:
+            duration: 2m
+
+            templates:
+              - name: baseline
+                specRef: stable
+
+              - name: canary
+                specRef: canary
+
+            analyses:
+              - name: success-rate
+                requiredForCompletion: true
+                templateName: success-rate
+                args:
+                  - name: service-name
+                    value: rollouts-demo
+
+        - setWeight: 50
+
+        - pause:
+            duration: 10s
+
+        - setWeight: 100
