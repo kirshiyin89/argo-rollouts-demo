@@ -33,16 +33,18 @@ spec:
 
   strategy:
 
-    blueGreen:
+  blueGreen:
 
-      activeService: rollout-demo-active
+    activeService: rollout-demo-active
 
-      previewService: rollout-demo-preview
+    previewService: rollout-demo-preview
 
-      previewReplicaCount: 1
+    previewReplicaCount: 1
 
-      autoPromotionEnabled: false
-      prePromotionAnalysis:
+    autoPromotionEnabled: false
+
+    prePromotionAnalysis:
+
       templates:
       - templateName: rollout-demo-smoke-test
 
