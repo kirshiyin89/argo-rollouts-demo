@@ -42,5 +42,8 @@ spec:
       previewReplicaCount: 1
 
       autoPromotionEnabled: false
+      prePromotionAnalysis:
+      templates:
+      - templateName: rollout-demo-smoke-test
 
 
