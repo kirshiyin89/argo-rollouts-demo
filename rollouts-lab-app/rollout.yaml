@@ -43,8 +43,4 @@ spec:
 
       autoPromotionEnabled: false
 
-      prePromotionAnalysis:
 
-        templates:
-
-        - templateName: preview-health-check
