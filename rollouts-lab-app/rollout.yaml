@@ -1,64 +1,50 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
+
 metadata:
-  name: rollouts-demo
-  namespace: demo
+  name: rollout-demo
+
 spec:
-  replicas: 5
-  revisionHistoryLimit: 3
+  replicas: 3
+
+  revisionHistoryLimit: 2
 
   selector:
     matchLabels:
-      app: rollouts-demo
+      app: rollout-demo
 
   template:
+
     metadata:
       labels:
-        app: rollouts-demo
+        app: rollout-demo
+
     spec:
+
       containers:
-        - name: rollouts-demo
-          image: argoproj/rollouts-demo:red
-          ports:
-            - containerPort: 8080
+
+      - name: app
+
+        image: argoproj/rollouts-demo:blue
+
+        ports:
+
+        - containerPort: 8080
 
   strategy:
-    canary:
-      trafficRouting:
-        istio:
-          virtualService:
-            name: rollouts-demo-vsvc
-            routes:
-              - primary
-          destinationRule:
-            name: rollouts-demo-destrule
-            canarySubsetName: canary
-            stableSubsetName: stable
 
-      steps:
-        - setWeight: 20
+    blueGreen:
 
-        - experiment:
-            duration: 2m
+      activeService: rollout-demo-active
 
-            templates:
-              - name: baseline
-                specRef: stable
+      previewService: rollout-demo-preview
 
-              - name: canary
-                specRef: canary
+      previewReplicaCount: 1
 
-            analyses:
-              - name: success-rate
-                requiredForCompletion: true
-                templateName: success-rate
-                args:
-                  - name: service-name
-                    value: rollouts-demo
+      autoPromotionEnabled: false
 
-        - setWeight: 50
+      prePromotionAnalysis:
 
-        - pause:
-            duration: 10s
+        templates:
 
-        - setWeight: 100
+        - templateName: preview-health-check
