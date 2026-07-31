@@ -3,6 +3,7 @@ kind: Rollout
 
 metadata:
   name: rollout-demo
+  namespace: demo
 
 spec:
   replicas: 3
@@ -14,38 +15,29 @@ spec:
       app: rollout-demo
 
   template:
-
     metadata:
       labels:
         app: rollout-demo
 
     spec:
-
       containers:
+        - name: app
+          image: argoproj/rollouts-demo:orange
 
-      - name: app
-
-        image: argoproj/rollouts-demo:red
-
-        ports:
-
-        - containerPort: 8080
+          ports:
+            - containerPort: 8080
 
   strategy:
+    blueGreen:
 
-  blueGreen:
+      activeService: rollout-demo-active
 
-    activeService: rollout-demo-active
+      previewService: rollout-demo-preview
 
-    previewService: rollout-demo-preview
+      previewReplicaCount: 1
 
-    previewReplicaCount: 1
+      autoPromotionEnabled: false
 
-    autoPromotionEnabled: false
-
-    prePromotionAnalysis:
-
-      templates:
-      - templateName: rollout-demo-smoke-test
-
-
+      prePromotionAnalysis:
+        templates:
+          - templateName: rollout-demo-smoke-test
