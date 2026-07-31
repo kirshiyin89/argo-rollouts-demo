@@ -1,15 +1,30 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: preview-health-check
+  name: rollout-demo-smoke-test
+  namespace: demo
+
 spec:
-
   metrics:
+  - name: smoke-test
 
-  - name: health
-
-    successCondition: result == "200"
+    count: 1
 
     provider:
-      web:
-        url: http://rollout-demo-preview/
+      job:
+        spec:
+          backoffLimit: 0
+          template:
+            spec:
+              restartPolicy: Never
+
+              containers:
+              - name: smoke-test
+                image: curlimages/curl:latest
+
+                command:
+                - sh
+                - -c
+
+                - |
+                  curl -f http://rollout-demo-preview
