@@ -28,4 +28,10 @@ spec:
       previewService: rollouts-demo-preview
       autoPromotionEnabled: false
       scaleDownDelaySeconds: 30
+      prePromotionAnalysis:
+        templates:
+          - templateName: success-rate
+        args:
+          - name: service-name
+            value: rollouts-demo-preview
 
