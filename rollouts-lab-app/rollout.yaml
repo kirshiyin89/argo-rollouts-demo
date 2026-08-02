@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: argoproj/rollouts-demo:orange
+          image: argoproj/rollouts-demo:green
 
           ports:
             - containerPort: 8080
@@ -40,4 +40,7 @@ spec:
 
       prePromotionAnalysis:
         templates:
-          - templateName: rollout-demo-smoke-test
+          - templateName: rollout-demo-smoke-test 
+      postPromotionAnalysis:
+        templates:
+          - templateName: rollout-demo-smoke-test-active
