@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: rollout-demo-smoke-test-active
+  namespace: demo
+spec:
+  metrics:
+  - name: smoke-test
+    count: 1
+    provider:
+      job:
+        spec:
+          backoffLimit: 0
+          template:
+            spec:
+              restartPolicy: Never
+              containers:
+              - name: smoke-test
+                image: curlimages/curl:latest
+                command:
+                - sh
+                - -c
+                - |
+                  curl -f http://rollout-demo-active .
