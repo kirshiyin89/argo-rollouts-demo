@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: argoproj/rollouts-demo:yellow
+          image: argoproj/rollouts-demo:blue
 
           ports:
             - containerPort: 8080
@@ -36,7 +36,7 @@ spec:
 
       previewReplicaCount: 1
 
-      autoPromotionEnabled: false
+      autoPromotionSeconds: 30
 
       prePromotionAnalysis:
         templates:
