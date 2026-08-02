@@ -21,4 +21,4 @@ spec:
                 - sh
                 - -c
                 - |
-                  curl -f http://rollout-demo-active .
+                  curl -f http://rollout-demo-active 
