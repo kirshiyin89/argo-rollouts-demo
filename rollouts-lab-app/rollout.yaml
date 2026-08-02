@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: argoproj/rollouts-demo:orange
+          image: argoproj/rollouts-demo:green
 
           ports:
             - containerPort: 8080
