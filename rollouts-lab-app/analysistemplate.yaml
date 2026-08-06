@@ -1,0 +1,25 @@
+# A minimal AnalysisTemplate. In a real cluster this would query Prometheus
+# for error rate / latency. Here we use a trivial "job" measurement so you
+# can see the full promote/fail mechanics without needing a metrics stack.
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: demo-app-healthcheck
+spec:
+  metrics:
+    - name: always-pass
+      interval: 10s
+      count: 2
+      # Job provider: metric is judged Successful/Failed by the Job's own
+      # exit code, so no successCondition is needed here.
+      provider:
+        job:
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                containers:
+                  - name: check
+                    image: busybox
+                    command: ["sh", "-c", "echo true"]
+                restartPolicy: Never

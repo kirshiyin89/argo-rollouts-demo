@@ -1,0 +1,31 @@
+# SAFE MIGRATION PATH: this Rollout does NOT define its own pod template.
+# It references the existing "demo-app" Deployment's template via workloadRef.
+# The old Deployment keeps running until the Rollout is confirmed Healthy.
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: demo-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: demo-app
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: demo-app
+    # never       -> old Deployment stays up forever (max safety, manual cleanup)
+    # onsuccess   -> old Deployment scaled to 0 once Rollout is Healthy
+    # progressively -> old Deployment scaled down in step with Rollout scale-up
+    scaleDown: onsuccess
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: {duration: 30s}
+        - analysis:
+            templates:
+              - templateName: demo-app-healthcheck
+        - setWeight: 50
+        - pause: {duration: 30s}
+        - setWeight: 100
