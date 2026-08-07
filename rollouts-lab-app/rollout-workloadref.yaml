@@ -17,7 +17,7 @@ spec:
     # never       -> old Deployment stays up forever (max safety, manual cleanup)
     # onsuccess   -> old Deployment scaled to 0 once Rollout is Healthy
     # progressively -> old Deployment scaled down in step with Rollout scale-up
-    scaleDown: onsuccess
+    scaleDown: progressively
   strategy:
     canary:
       steps:
