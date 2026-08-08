@@ -1,46 +1,35 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
-
 metadata:
-  name: rollout-demo
-  namespace: demo
-
+  name: hpa-demo
+  namespace: default
 spec:
   replicas: 3
-
-  revisionHistoryLimit: 2
-
   selector:
     matchLabels:
-      app: rollout-demo
-
+      app: hpa-demo
   template:
     metadata:
       labels:
-        app: rollout-demo
-
+        app: hpa-demo
     spec:
       containers:
-        - name: app
-          image: argoproj/rollouts-demo:yellow
-
-          ports:
-            - containerPort: 8080
-
+      - name: hpa-demo
+        image: registry.k8s.io/hpa-example
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 200m
   strategy:
-    blueGreen:
-
-      activeService: rollout-demo-active
-
-      previewService: rollout-demo-preview
-
-      previewReplicaCount: 1
-
-      autoPromotionSeconds: 30
-
-      prePromotionAnalysis:
-        templates:
-          - templateName: rollout-demo-smoke-test 
-      postPromotionAnalysis:
-        templates:
-          - templateName: rollout-demo-smoke-test-active
+    canary:
+      canaryService: hpa-demo-canary
+      stableService: hpa-demo-stable
+      steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+      - setWeight: 100
