@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: hpa-demo-vsvc
+spec:
+  hosts:
+  - hpa-demo-root
+  http:
+  - name: primary
+    route:
+    - destination:
+        host: hpa-demo-stable
+      weight: 100
+    - destination:
+        host: hpa-demo-canary
+      weight: 0
