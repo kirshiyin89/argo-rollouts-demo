@@ -9,7 +9,7 @@ spec:
     kind: Rollout
     name: vpa-demo
   updatePolicy:
-    updateMode: "Off"
+    updateMode: "Auto"
   resourcePolicy:
     containerPolicies:
     - containerName: app
