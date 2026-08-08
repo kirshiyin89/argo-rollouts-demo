@@ -38,7 +38,7 @@ spec:
    #         replicas: 1        # exactly 1 canary pod gets 20% of traffic
         - pause: { }
         - setWeight: 50
-        - setCanaryScale:
-            replicas: 3
+#       - setCanaryScale:
+#            replicas: 3
         - pause: { }
         - setWeight: 100
