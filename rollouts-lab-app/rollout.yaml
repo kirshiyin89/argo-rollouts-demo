@@ -13,22 +13,32 @@ spec:
         app: hpa-demo
     spec:
       containers:
-      - name: hpa-demo
-        image: registry.k8s.io/hpa-example
-        ports:
-        - containerPort: 80
-        resources:
-          requests:
-            cpu: 100m
-          limits:
-            cpu: 200m
+        - name: hpa-demo
+          image: registry.k8s.io/hpa-example
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+            limits:
+              cpu: 200m
   strategy:
     canary:
       canaryService: hpa-demo-canary
       stableService: hpa-demo-stable
+      trafficRouting:
+        istio:
+          virtualServices:
+            - name: hpa-demo-vsvc
+              routes:
+                - primary
       steps:
-      - setWeight: 20
-      - pause: {}
-      - setWeight: 50
-      - pause: {}
-      - setWeight: 100
+        - setWeight: 20
+        - setCanaryScale:
+            replicas: 1        # exactly 1 canary pod gets 20% of traffic
+        - pause: { }
+        - setWeight: 50
+        - setCanaryScale:
+            replicas: 3
+        - pause: { }
+        - setWeight: 100
