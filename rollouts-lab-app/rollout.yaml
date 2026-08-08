@@ -1,44 +1,29 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: hpa-demo
+  name: vpa-demo
   namespace: demo
 spec:
+  replicas: 2
   selector:
     matchLabels:
-      app: hpa-demo
+      app: vpa-demo
   template:
     metadata:
       labels:
-        app: hpa-demo
+        app: vpa-demo
     spec:
       containers:
-        - name: hpa-demo
-          image: registry.k8s.io/hpa-example
-          ports:
-            - containerPort: 80
-          resources:
-            requests:
-              cpu: 100m
-            limits:
-              cpu: 200m
+      - name: app
+        image: <your image>
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
   strategy:
     canary:
-      canaryService: hpa-demo-canary
-      stableService: hpa-demo-stable
-      trafficRouting:
-        istio:
-           virtualServices:
-             - name: hpa-demo-vsvc
-               routes:
-                 - primary
       steps:
-        - setWeight: 20
-        - setCanaryScale:
-            replicas: 1        # exactly 1 canary pod gets 20% of traffic
-        - pause: { }
-        - setWeight: 50
-        - setCanaryScale:
-             replicas: 3
-        - pause: { }
-        - setWeight: 100
+      - setWeight: 100
