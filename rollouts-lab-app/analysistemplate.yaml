@@ -5,6 +5,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
   name: demo-app-healthcheck
+  namespace: demo
 spec:
   metrics:
     - name: always-pass
