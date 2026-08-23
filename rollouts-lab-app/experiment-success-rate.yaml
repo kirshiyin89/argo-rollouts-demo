@@ -18,7 +18,7 @@ spec:
 
       provider:
         prometheus:
-          address: http://prometheus.istio-system:9090
+          address: http://prometheus-server.monitoring
 
           query: |
             sum(
@@ -49,7 +49,7 @@ spec:
 
       provider:
         prometheus:
-          address: http://prometheus.istio-system:9090
+          address: http://prometheus-server.monitoring
 
           query: |
             sum(
