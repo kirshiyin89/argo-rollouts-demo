@@ -1,0 +1,74 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: experiment-success-rate
+  namespace: demo
+spec:
+  args:
+    - name: baseline-hash
+
+    - name: canary-hash
+
+  metrics:
+
+    - name: baseline-success-rate
+      interval: 30s
+      failureLimit: 1
+      successCondition: result[0] >= 0.95
+
+      provider:
+        prometheus:
+          address: http://prometheus.istio-system:9090
+
+          query: |
+            sum(
+              rate(
+                istio_requests_total{
+                  reporter="destination",
+                  response_code=~"2..",
+                  destination_workload=~"rollouts-demo.*",
+                  pod_template_hash="{{args.baseline-hash}}"
+                }[1m]
+              )
+            )
+            /
+            sum(
+              rate(
+                istio_requests_total{
+                  reporter="destination",
+                  destination_workload=~"rollouts-demo.*",
+                  pod_template_hash="{{args.baseline-hash}}"
+                }[1m]
+              )
+            )
+
+    - name: canary-success-rate
+      interval: 30s
+      failureLimit: 1
+      successCondition: result[0] >= 0.95
+
+      provider:
+        prometheus:
+          address: http://prometheus.istio-system:9090
+
+          query: |
+            sum(
+              rate(
+                istio_requests_total{
+                  reporter="destination",
+                  response_code=~"2..",
+                  destination_workload=~"rollouts-demo.*",
+                  pod_template_hash="{{args.canary-hash}}"
+                }[1m]
+              )
+            )
+            /
+            sum(
+              rate(
+                istio_requests_total{
+                  reporter="destination",
+                  destination_workload=~"rollouts-demo.*",
+                  pod_template_hash="{{args.canary-hash}}"
+                }[1m]
+              )
+            )

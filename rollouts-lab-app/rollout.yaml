@@ -3,25 +3,6 @@ kind: Rollout
 metadata:
   name: rollouts-demo
   namespace: demo
-  annotations:
-    # -------------------------------------------------------------------
-    # Subscriptions block (recommended over separate single-trigger
-    # annotations once you're subscribing to more than 1-2 triggers —
-    # keeps routing readable and lets you split channels by severity).
-    # -------------------------------------------------------------------
-    notifications.argoproj.io/subscriptions: |
-      - trigger: [on-rollout-step-completed, on-scaling-replica-set]
-        destinations:
-          - service: slack
-            recipients: [rollouts]
-      - trigger: [on-rollout-completed, on-rollout-paused]
-        destinations:
-          - service: slack
-            recipients: [rollouts]
-      - trigger: [on-rollout-aborted, on-analysis-run-failed, on-analysis-run-error, on-rollout-degraded]
-        destinations:
-          - service: slack
-            recipients: [rollouts]
 spec:
   replicas: 5
   revisionHistoryLimit: 3
@@ -34,21 +15,24 @@ spec:
     metadata:
       labels:
         app: rollouts-demo
+
     spec:
       containers:
         - name: rollouts-demo
-          image: argoproj/rollouts-demo:red
+          image: argoproj/rollouts-demo:orange
           ports:
             - containerPort: 8080
 
   strategy:
     canary:
+
       trafficRouting:
         istio:
           virtualService:
             name: rollouts-demo-vsvc
             routes:
               - primary
+
           destinationRule:
             name: rollouts-demo-destrule
             canarySubsetName: canary
@@ -70,10 +54,14 @@ spec:
             analyses:
               - name: success-rate
                 requiredForCompletion: true
-                templateName: success-rate
+                templateName: experiment-success-rate
+
                 args:
-                  - name: service-name
-                    value: rollouts-demo
+                  - name: baseline-hash
+                    value: "{{templates.baseline.podTemplateHash}}"
+
+                  - name: canary-hash
+                    value: "{{templates.canary.podTemplateHash}}"
 
         - setWeight: 50
 
