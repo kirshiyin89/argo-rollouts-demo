@@ -21,4 +21,4 @@ spec:
                       - -c
                       - |
                         echo "Running experiment analysis"
-                        exit 1
+                        exit 0
