@@ -20,5 +20,5 @@ spec:
                       - sh
                       - -c
                       - |
-                        echo "Checking experiment version"
+                        echo "Running experiment analysis"
                         exit 0
