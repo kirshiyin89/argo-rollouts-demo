@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: rollouts-demo
-          image: argoproj/rollouts-demo:red
+          image: argoproj/rollouts-demo:blue
           ports:
             - containerPort: 8080
 
@@ -29,12 +29,18 @@ spec:
 
         - experiment:
             duration: 60s
+
             templates:
               - name: baseline
                 specRef: stable
 
               - name: canary
                 specRef: canary
+
+            analyses:
+              - name: version-check
+                templateName: experiment-version-check
+                requiredForCompletion: true
 
         - setWeight: 50
 
