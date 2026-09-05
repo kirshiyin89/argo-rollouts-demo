@@ -28,10 +28,10 @@ spec:
       stableService: hpa-demo-stable
       trafficRouting:
         istio:
-           virtualService:
-             - name: hpa-demo-vsvc
-               routes:
-                 - primary
+          virtualService:
+            name: hpa-demo-vsvc
+            routes:
+              - primary
       steps:
         - setWeight: 20
         - setCanaryScale:
@@ -39,6 +39,6 @@ spec:
         - pause: { }
         - setWeight: 50
         - setCanaryScale:
-             replicas: 3
+            replicas: 3
         - pause: { }
         - setWeight: 100
