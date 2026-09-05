@@ -28,7 +28,7 @@ spec:
       stableService: hpa-demo-stable
       trafficRouting:
         istio:
-           virtualServices:
+           virtualService:
              - name: hpa-demo-vsvc
                routes:
                  - primary
